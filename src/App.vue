@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import CategoryPanel from './components/CategoryPanel.vue'
 import SummaryPanel from './components/SummaryPanel.vue'
+import TaskPanel from './components/TaskPanel.vue'
+import { useTasks } from './composables/useTasks.ts'
 import { fmtDuration, useTimeTracker } from './composables/useTimeTracker.ts'
 
 const {
@@ -21,6 +23,12 @@ const {
   overallTotalMs,
   overallPct,
 } = useTimeTracker()
+
+const { taskItems, totalXp, level, currentLevelXp, streakDays } = useTasks({
+  selectedDate,
+  store,
+  overallTotalMs,
+})
 </script>
 
 <template>
@@ -45,6 +53,15 @@ const {
     <div v-if="loading" class="notice">正在从本地存储加载 {{ selectedDate }} 的数据...</div>
     <div v-if="error" class="notice error">加载失败：{{ error }}</div>
     <div v-if="availableDates.length" class="notice soft">已记录日期：{{ availableDates.join('，') }}</div>
+
+    <TaskPanel
+      :selected-date="selectedDate"
+      :task-items="taskItems"
+      :total-xp="totalXp"
+      :level="level"
+      :current-level-xp="currentLevelXp"
+      :streak-days="streakDays"
+    />
 
     <main class="grid">
       <CategoryPanel
